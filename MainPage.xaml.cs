@@ -1,24 +1,29 @@
-﻿namespace TestApp
+﻿using Plugin.Media;
+using Plugin.Media.Abstractions;
+
+namespace TestApp
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void OnOpenCameraClicked(object sender, EventArgs e)
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            try
+            {
+                // settings for the camera
+                var options = new StoreCameraMediaOptions { CompressionQuality = 50 };
+                // Launch the camera app
+                var result = await CrossMedia.Current.TakePhotoAsync(options);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception or display an error message
+                await DisplayAlert("Error", $"Unable to open camera app: {ex.Message}", "OK");
+            }
         }
     }
 
